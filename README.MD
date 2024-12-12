@@ -1,0 +1,1 @@
+MVC Framework for PHP. Educational purposes only
