@@ -7,20 +7,22 @@ use Dgudovic\Framework\Http\HttpRequestMethodException;
 use Dgudovic\Framework\Http\Request;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use Psr\Container\ContainerInterface;
 use function FastRoute\simpleDispatcher;
 
 class Router implements RouterInterface
 {
+    private array $routes;
     /**
      * @throws HttpException
      */
-    public function dispatch(Request $request): array
+    public function dispatch(Request $request, ContainerInterface $container): array
     {
         [$handler, $vars] = $this->extractRouteInfo($request);
 
         if (is_array($handler)) {
             [$controller, $method] = $handler;
-            $handler = [new $controller, $method];
+            $handler = [$container->get($controller), $method];
         }
 
         return [$handler, $vars];
@@ -32,9 +34,8 @@ class Router implements RouterInterface
     private function extractRouteInfo(Request $request): array
     {
         $dispatcher = simpleDispatcher(function (RouteCollector $routeCollector) {
-            $routes = include BASE_PATH . '/routes/web.php';
 
-            foreach ($routes as $route) {
+            foreach ($this->routes as $route) {
                 $routeCollector->addRoute(...$route);
             }
         });
@@ -54,5 +55,10 @@ class Router implements RouterInterface
                 return [$routeInfo[1], $routeInfo[2]];
         }
 
+    }
+
+    public function  setRoutes(array $routes): void
+    {
+        $this->routes = $routes;
     }
 }

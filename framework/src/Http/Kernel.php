@@ -4,25 +4,25 @@ namespace Dgudovic\Framework\Http;
 
 use Dgudovic\Framework\Routing\RouterInterface;
 use Exception;
+use League\Container\Container;
+use Psr\Container\ContainerInterface;
 
 readonly class Kernel
 {
-    private RouterInterface $router;
 
-    public function __construct(RouterInterface $router)
+
+    public function __construct(private RouterInterface $router, private ContainerInterface $container)
     {
-        $this->router = $router;
+
     }
 
     public function handle(Request $request): Response
     {
         try {
-            [$routeHandler, $vars] = $this->router->dispatch($request);
+            [$routeHandler, $vars] = $this->router->dispatch($request, $this->container);
             $response = call_user_func_array($routeHandler, $vars);
-        } catch (HttpException $exception) {
-            $response = new Response($exception->getMessage(), $exception->getCode());
-        } catch (Exception $exception) {
-            $response = new Response('Internal server error', 500);
+        } catch (Exception $ex) {
+            $response = new Response($ex->getMessage(), 500);
         }
 
         return $response;
