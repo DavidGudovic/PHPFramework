@@ -12,5 +12,6 @@ $container = require_once BASE_PATH . '/config/services.php';
 
 $request = Request::createFromGlobals();
 
-$kernel = new Kernel(new Router());
+$kernel = $container->get(Kernel::class);
+
 $kernel->handle($request)->send();
