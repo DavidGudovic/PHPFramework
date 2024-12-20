@@ -3,3 +3,4 @@ composer.lock
 composer.phar
 .idea/
 docker-compose.yaml
+.env
