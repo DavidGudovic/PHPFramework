@@ -1,10 +1,6 @@
 <?php
 
-use Dgudovic\Framework\{
-    Http\Kernel,
-    Routing\Router,
-    Routing\RouterInterface
-};
+use Dgudovic\Framework\{Controller\AbstractController, Http\Kernel, Routing\Router, Routing\RouterInterface};
 use League\Container\{
     Argument\Literal\ArrayArgument,
     Argument\Literal\StringArgument,
@@ -40,6 +36,8 @@ $container->add(Kernel::class)
     ->addArgument($container);
 
 $container->addShared('filesystem-loader', FilesystemLoader::class)->addArgument(new StringArgument($templatesPath));
-$container->addShared(Environment::class)->addArgument('filesystem-loader');
+$container->addShared('twig', Environment::class)->addArgument('filesystem-loader');
+
+$container->inflector(AbstractController::class)->invokeMethod('setContainer', [$container]);
 
 return $container;
