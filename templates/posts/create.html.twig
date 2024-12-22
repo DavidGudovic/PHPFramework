@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <form>
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" aria-describedby="titleHelp">
+            <div id="titleHelp" class="form-text">Give your post a catchy title.</div>
+        </div>
+        <div class="mb-3">
+            <label for="body" class="form-label">Body</label>
+            <label for="textField"></label><textarea name="body" id="textField" cols="30" rows="10"
+                                                     class="form-control"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}

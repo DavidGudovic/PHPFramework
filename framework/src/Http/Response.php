@@ -4,7 +4,7 @@ namespace Dgudovic\Framework\Http;
 
 use JetBrains\PhpStorm\NoReturn;
 
-readonly class Response
+class Response
 {
     public const HTTP_INTERNAL_SERVER_ERROR = 500;
     public const HTTP_OK = 200;
@@ -12,6 +12,7 @@ readonly class Response
     public const HTTP_BAD_REQUEST = 400;
     public const HTTP_UNAUTHORIZED = 401;
     public const HTTP_FORBIDDEN = 403;
+
     public function __construct(
         public ?string $content = '',
         public int     $status = 200,
@@ -30,5 +31,11 @@ readonly class Response
         }
 
         echo $this->content;
+    }
+
+    public function setContent(string $content): self
+    {
+        $this->content = $content;
+        return $this;
     }
 }

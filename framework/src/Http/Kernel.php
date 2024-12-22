@@ -40,6 +40,6 @@ readonly class Kernel
             return new Response($ex->getMessage(), $ex->getStatusCode());
         }
 
-        return new Response($ex->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        return new Response('Internal Server Error', Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
