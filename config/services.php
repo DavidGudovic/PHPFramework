@@ -1,6 +1,7 @@
 <?php
 
-use Dgudovic\Framework\{Controller\AbstractController,
+use Dgudovic\Framework\{Console\Application,
+    Controller\AbstractController,
     Dbal\ConnectionFactory,
     Http\Kernel,
     Routing\Router,
@@ -34,12 +35,20 @@ $templatesPath = BASE_PATH . '/templates';
 $container->add('APP_ENV', new StringArgument($appEnv));
 $databaseUrl = 'sqlite:///' . BASE_PATH . '/var/db.sqlite';
 
+$container->add('base-commands-namespace', new StringArgument('Dgudovic\\Framework\\Console\\Command\\'));
+
 # services
 $container->add(RouterInterface::class, Router::class)->addMethodCall('setRoutes', [new ArrayArgument($routes)]);
+
+$container->add(Application::class)
+    ->addArgument($container);
 
 $container->add(Kernel::class)
     ->addArgument(RouterInterface::class)
     ->addArgument($container);
+
+$container->add(\Dgudovic\Framework\Console\Kernel::class)
+    ->addArguments([$container, Application::class]);
 
 $container->addShared('filesystem-loader', FilesystemLoader::class)->addArgument(new StringArgument($templatesPath));
 $container->addShared('twig', Environment::class)->addArgument('filesystem-loader');
@@ -48,6 +57,6 @@ $container->inflector(AbstractController::class)->invokeMethod('setContainer', [
 
 $container->add(ConnectionFactory::class)->addArguments([new StringArgument($databaseUrl)]);
 
-$container->addShared(Connection::class, fn () => $container->get(ConnectionFactory::class)->create());
+$container->addShared(Connection::class, fn() => $container->get(ConnectionFactory::class)->create());
 
 return $container;
