@@ -3,6 +3,7 @@
 namespace Dgudovic\Framework\Http;
 
 use Dgudovic\Framework\Routing\RouterInterface;
+use Doctrine\DBAL\Connection;
 use Exception;
 use League\Container\Container;
 use Psr\Container\ContainerInterface;

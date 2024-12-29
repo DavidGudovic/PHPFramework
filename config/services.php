@@ -1,12 +1,17 @@
 <?php
 
-use Dgudovic\Framework\{Controller\AbstractController, Http\Kernel, Routing\Router, Routing\RouterInterface};
+use Dgudovic\Framework\{Controller\AbstractController,
+    Dbal\ConnectionFactory,
+    Http\Kernel,
+    Routing\Router,
+    Routing\RouterInterface};
 use League\Container\{
     Argument\Literal\ArrayArgument,
     Argument\Literal\StringArgument,
     Container,
     ReflectionContainer
 };
+use Doctrine\DBAL\Connection;
 use Symfony\Component\Dotenv\Dotenv;
 use Twig\{
     Environment,
@@ -27,6 +32,7 @@ $appEnv = $_ENV['APP_ENV'];
 $templatesPath = BASE_PATH . '/templates';
 
 $container->add('APP_ENV', new StringArgument($appEnv));
+$databaseUrl = 'sqlite:///' . BASE_PATH . '/var/db.sqlite';
 
 # services
 $container->add(RouterInterface::class, Router::class)->addMethodCall('setRoutes', [new ArrayArgument($routes)]);
@@ -39,5 +45,9 @@ $container->addShared('filesystem-loader', FilesystemLoader::class)->addArgument
 $container->addShared('twig', Environment::class)->addArgument('filesystem-loader');
 
 $container->inflector(AbstractController::class)->invokeMethod('setContainer', [$container]);
+
+$container->add(ConnectionFactory::class)->addArguments([new StringArgument($databaseUrl)]);
+
+$container->addShared(Connection::class, fn () => $container->get(ConnectionFactory::class)->create());
 
 return $container;
