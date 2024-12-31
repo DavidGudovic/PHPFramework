@@ -1,11 +1,13 @@
 <?php
 
 use Dgudovic\Framework\{Console\Application,
+    Console\Command\MigrateDatabase,
     Controller\AbstractController,
     Dbal\ConnectionFactory,
     Http\Kernel,
     Routing\Router,
-    Routing\RouterInterface};
+    Routing\RouterInterface
+};
 use League\Container\{
     Argument\Literal\ArrayArgument,
     Argument\Literal\StringArgument,
@@ -58,5 +60,7 @@ $container->inflector(AbstractController::class)->invokeMethod('setContainer', [
 $container->add(ConnectionFactory::class)->addArguments([new StringArgument($databaseUrl)]);
 
 $container->addShared(Connection::class, fn() => $container->get(ConnectionFactory::class)->create());
+
+$container->add('database:migrations:migrate', MigrateDatabase::class)->addArgument(Connection::class);
 
 return $container;
