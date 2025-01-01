@@ -2,6 +2,7 @@
 
 namespace Dgudovic\Framework\Routing;
 
+use Dgudovic\Framework\Controller\AbstractController;
 use Dgudovic\Framework\Http\HttpException;
 use Dgudovic\Framework\Http\HttpRequestMethodException;
 use Dgudovic\Framework\Http\Request;
@@ -13,6 +14,7 @@ use function FastRoute\simpleDispatcher;
 class Router implements RouterInterface
 {
     private array $routes;
+
     /**
      * @throws HttpException
      */
@@ -23,7 +25,13 @@ class Router implements RouterInterface
         if (is_array($handler)) {
             [$controller, $method] = $handler;
             $handler = [$container->get($controller), $method];
+
+            if (is_subclass_of($controller, AbstractController::class)){
+                $controller->setRequest($request);
+            }
         }
+
+        $vars['request'] = $request;
 
         return [$handler, $vars];
     }
