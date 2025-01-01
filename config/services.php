@@ -61,6 +61,7 @@ $container->add(ConnectionFactory::class)->addArguments([new StringArgument($dat
 
 $container->addShared(Connection::class, fn() => $container->get(ConnectionFactory::class)->create());
 
-$container->add('database:migrations:migrate', MigrateDatabase::class)->addArgument(Connection::class);
+$container->add('database:migrations:migrate', MigrateDatabase::class)
+    ->addArguments([Connection::class, new StringArgument(BASE_PATH . '/migrations')]);
 
 return $container;
