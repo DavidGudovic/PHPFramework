@@ -8,7 +8,9 @@ use Dgudovic\Framework\Http\HttpRequestMethodException;
 use Dgudovic\Framework\Http\Request;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use function FastRoute\simpleDispatcher;
 
 class Router implements RouterInterface
@@ -16,7 +18,12 @@ class Router implements RouterInterface
     private array $routes;
 
     /**
+     * @param Request $request
+     * @param ContainerInterface $container
+     * @return array
      * @throws HttpException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function dispatch(Request $request, ContainerInterface $container): array
     {
@@ -24,14 +31,13 @@ class Router implements RouterInterface
 
         if (is_array($handler)) {
             [$controller, $method] = $handler;
-            $handler = [$container->get($controller), $method];
+            $controller = $container->get($controller);
+            $handler = [$controller, $method];
 
             if (is_subclass_of($controller, AbstractController::class)){
                 $controller->setRequest($request);
             }
         }
-
-        $vars['request'] = $request;
 
         return [$handler, $vars];
     }
