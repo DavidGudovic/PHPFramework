@@ -18,10 +18,6 @@
       "Dgudovic\\Framework\\Tests\\": "tests/"
     }
   },
-  "require-dev": {
-    "symfony/var-dumper": "^7.2",
-    "phpunit/phpunit": "^11.5"
-  },
   "require": {
     "nikic/fast-route": "^1.3",
     "psr/container": "^2.0",
