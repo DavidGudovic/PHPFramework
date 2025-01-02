@@ -8,6 +8,7 @@ use App\Repository\PostRepository;
 use DateMalformedStringException;
 use Dgudovic\Framework\Controller\AbstractController;
 use Dgudovic\Framework\Http\NotFoundException;
+use Dgudovic\Framework\Http\RedirectResponse;
 use Dgudovic\Framework\Http\Response;
 use Doctrine\DBAL\Exception;
 
@@ -38,19 +39,15 @@ class PostsController extends AbstractController
         return $this->render('posts/create.html.twig');
     }
 
-    public function store(): void
+    public function store(): RedirectResponse
     {
         $title = $this->request->postParams['title'];
         $body = $this->request->postParams['body'];
 
         $post = Post::create($title, $body);
 
-        try {
-            $this->postMapper->save($post);
-        } catch (Exception $e) {
-            dd($e);
-        }
+        $this->postMapper->save($post);
 
-        dd($post);
+        return new RedirectResponse('/posts');
     }
 }

@@ -7,6 +7,7 @@ use JetBrains\PhpStorm\NoReturn;
 class Response
 {
     public const HTTP_INTERNAL_SERVER_ERROR = 500;
+    public const HTTP_REDIRECT = 302;
     public const HTTP_OK = 200;
     public const HTTP_NOT_FOUND = 404;
     public const HTTP_BAD_REQUEST = 400;
@@ -37,5 +38,15 @@ class Response
     {
         $this->content = $content;
         return $this;
+    }
+
+    public function getStatus(): int
+    {
+        return $this->status;
+    }
+
+    public function getHeader(string $header): mixed
+    {
+        return $this->headers[$header] ?? null;
     }
 }
