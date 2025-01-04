@@ -45,4 +45,9 @@ readonly class Kernel
 
         return new Response('Internal Server Error', Response::HTTP_INTERNAL_SERVER_ERROR);
     }
+
+    public function terminate(Request $request, Response $response): void
+    {
+        $request->getSession()?->clearFlash();
+    }
 }
