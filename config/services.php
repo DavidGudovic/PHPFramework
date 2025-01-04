@@ -6,8 +6,10 @@ use Dgudovic\Framework\{Console\Application,
     Dbal\ConnectionFactory,
     Http\Kernel,
     Routing\Router,
-    Routing\RouterInterface
-};
+    Routing\RouterInterface,
+    Session\Session,
+    Session\SessionInterface,
+    Template\TwigFactory};
 use League\Container\{
     Argument\Literal\ArrayArgument,
     Argument\Literal\StringArgument,
@@ -52,8 +54,17 @@ $container->add(Kernel::class)
 $container->add(\Dgudovic\Framework\Console\Kernel::class)
     ->addArguments([$container, Application::class]);
 
-$container->addShared('filesystem-loader', FilesystemLoader::class)->addArgument(new StringArgument($templatesPath));
-$container->addShared('twig', Environment::class)->addArgument('filesystem-loader');
+$container->addShared(SessionInterface::class, Session::class);
+
+$container->add('template-renderer-factory', TwigFactory::class)
+    ->addArguments([
+        SessionInterface::class,
+        new StringArgument($templatesPath)
+    ]);
+
+$container->addShared('twig', function () use ($container) {
+    return $container->get('template-renderer-factory')->create();
+});
 
 $container->inflector(AbstractController::class)->invokeMethod('setContainer', [$container]);
 
