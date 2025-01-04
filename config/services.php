@@ -7,11 +7,13 @@ use Dgudovic\Framework\{Console\Application,
     Http\Kernel,
     Http\Middleware\RequestHandler,
     Http\Middleware\RequestHandlerInterface,
+    Http\Middleware\RouterDispatch,
     Routing\Router,
     Routing\RouterInterface,
     Session\Session,
     Session\SessionInterface,
-    Template\TwigFactory};
+    Template\TwigFactory
+};
 use League\Container\{
     Argument\Literal\ArrayArgument,
     Argument\Literal\StringArgument,
@@ -81,5 +83,11 @@ $container->addShared(Connection::class, fn() => $container->get(ConnectionFacto
 
 $container->add('database:migrations:migrate', MigrateDatabase::class)
     ->addArguments([Connection::class, new StringArgument(BASE_PATH . '/migrations')]);
+
+$container->add(RouterDispatch::class)
+    ->addArguments([
+        RouterInterface::class,
+        $container
+    ]);
 
 return $container;
