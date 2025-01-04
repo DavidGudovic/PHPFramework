@@ -17,15 +17,14 @@ class PostsController extends AbstractController
 {
     public function __construct(
         private readonly PostMapper       $postMapper,
-        private readonly PostRepository   $postRepository,
-        private readonly SessionInterface $session
+        private readonly PostRepository   $postRepository
     )
     {
     }
 
     /**
-     * @throws DateMalformedStringException
      * @throws Exception|NotFoundException
+     * @throws DateMalformedStringException
      */
     public function show(int $id): Response
     {
@@ -50,7 +49,7 @@ class PostsController extends AbstractController
 
         $this->postMapper->save($post);
 
-        $this->session->setFlash('success', "Post {$post->getTitle()} successfully created.");
+        $this->request->getSession()->setFlash('success', "Post {$post->getTitle()} successfully created.");
 
         return new RedirectResponse('/posts');
     }

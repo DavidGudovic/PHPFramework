@@ -2,8 +2,11 @@
 
 namespace Dgudovic\Framework\Http;
 
+use Dgudovic\Framework\Session\SessionInterface;
+
 readonly class Request
 {
+    private SessionInterface $session;
     public function __construct(
         public array $getParams,
         public array $postParams,
@@ -33,5 +36,15 @@ readonly class Request
     public function getMethod()
     {
         return $this->server['REQUEST_METHOD'];
+    }
+
+    public function getSession(): SessionInterface
+    {
+        return $this->session;
+    }
+
+    public function setSession(SessionInterface $session): void
+    {
+        $this->session = $session;
     }
 }
