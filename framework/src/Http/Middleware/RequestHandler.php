@@ -4,6 +4,7 @@ namespace Dgudovic\Framework\Http\Middleware;
 
 use Dgudovic\Framework\Http\Request;
 use Dgudovic\Framework\Http\Response;
+use Psr\Container\ContainerInterface;
 
 class RequestHandler implements RequestHandlerInterface
 {
@@ -11,6 +12,10 @@ class RequestHandler implements RequestHandlerInterface
         Authenticate::class,
         Success::class
     ];
+
+    public function __construct(private readonly ContainerInterface $container)
+    {
+    }
 
     public function handle(Request $request): Response
     {
@@ -20,6 +25,8 @@ class RequestHandler implements RequestHandlerInterface
 
         $middlewareClass = array_shift($this->middleware);
 
-        return (new $middlewareClass())->process($request, $this);
+        $middleware = $this->container->get($middlewareClass);
+
+        return $middleware->process($request, $this);
     }
 }

@@ -49,7 +49,7 @@ $container->add(RouterInterface::class, Router::class)->addMethodCall('setRoutes
 $container->add(Application::class)
     ->addArgument($container);
 
-$container->add(RequestHandlerInterface::class, RequestHandler::class);
+$container->add(RequestHandlerInterface::class, RequestHandler::class)->addArgument($container);
 
 $container->add(Kernel::class)
     ->addArguments([
