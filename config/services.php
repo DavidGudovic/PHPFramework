@@ -5,6 +5,8 @@ use Dgudovic\Framework\{Console\Application,
     Controller\AbstractController,
     Dbal\ConnectionFactory,
     Http\Kernel,
+    Http\Middleware\RequestHandler,
+    Http\Middleware\RequestHandlerInterface,
     Routing\Router,
     Routing\RouterInterface,
     Session\Session,
@@ -47,9 +49,14 @@ $container->add(RouterInterface::class, Router::class)->addMethodCall('setRoutes
 $container->add(Application::class)
     ->addArgument($container);
 
+$container->add(RequestHandlerInterface::class, RequestHandler::class);
+
 $container->add(Kernel::class)
-    ->addArgument(RouterInterface::class)
-    ->addArgument($container);
+    ->addArguments([
+        RouterInterface::class,
+        $container,
+        RequestHandlerInterface::class
+    ]);
 
 $container->add(\Dgudovic\Framework\Console\Kernel::class)
     ->addArguments([$container, Application::class]);

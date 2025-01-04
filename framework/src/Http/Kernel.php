@@ -2,16 +2,19 @@
 
 namespace Dgudovic\Framework\Http;
 
+use Dgudovic\Framework\Http\Middleware\RequestHandlerInterface;
 use Dgudovic\Framework\Routing\RouterInterface;
-use Doctrine\DBAL\Connection;
 use Exception;
-use League\Container\Container;
 use Psr\Container\ContainerInterface;
 
 readonly class Kernel
 {
     private string $appEnv;
-    public function __construct(private RouterInterface $router, private ContainerInterface $container)
+    public function __construct(
+        private RouterInterface $router,
+        private ContainerInterface $container,
+        private RequestHandlerInterface $requestHandler
+    )
     {
         $this->appEnv = $this->container->get('APP_ENV');
     }
@@ -19,8 +22,7 @@ readonly class Kernel
     public function handle(Request $request): Response
     {
         try {
-            [$routeHandler, $vars] = $this->router->dispatch($request, $this->container);
-            $response = call_user_func_array($routeHandler, $vars);
+            $response = $this->requestHandler->handle($request);
         } catch (Exception $ex) {
             $response = $this->createExceptionResponse($ex);
         }
