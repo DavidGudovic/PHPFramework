@@ -10,13 +10,15 @@ use Dgudovic\Framework\Controller\AbstractController;
 use Dgudovic\Framework\Http\NotFoundException;
 use Dgudovic\Framework\Http\RedirectResponse;
 use Dgudovic\Framework\Http\Response;
+use Dgudovic\Framework\Session\SessionInterface;
 use Doctrine\DBAL\Exception;
 
 class PostsController extends AbstractController
 {
     public function __construct(
-        private readonly PostMapper     $postMapper,
-        private readonly PostRepository $postRepository
+        private readonly PostMapper       $postMapper,
+        private readonly PostRepository   $postRepository,
+        private readonly SessionInterface $session
     )
     {
     }
@@ -47,6 +49,8 @@ class PostsController extends AbstractController
         $post = Post::create($title, $body);
 
         $this->postMapper->save($post);
+
+        $this->session->setFlash('success', "Post {$post->getTitle()} successfully created.");
 
         return new RedirectResponse('/posts');
     }
